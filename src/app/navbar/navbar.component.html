@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+    <div class="container">
+    <a class="navbar-brand" href="#">Blog Application</a>
+    <div class="ml-auto">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+
+            <a class="nav-item nav-link active" routerLink="user/profile" *ngIf="(currentUser$ | async) as username">{{username}}</a>
+
+            <a class="nav-item nav-link" *ngIf="(loggedIn$ | async)" routerLink="user/home" routerLinkActive="active">Home</a>
+
+            <a class="nav-item nav-link" *ngIf="!(loggedIn$ | async)" routerLink="auth/signUp" routerLinkActive="active">SignUp</a>
+               
+            <a class="nav-item nav-link" *ngIf="!(loggedIn$ | async)" routerLink="auth/signIn" routerLinkActive="active">SignIn</a>
+                
+            <a class="nav-item nav-link" *ngIf="(loggedIn$ | async)"> About </a>
+
+            <!-- <a class="nav-item nav-link" routerLink="user/createBlog" routerLinkActive="active" *ngIf="(loggedIn$ | async)"> Create </a> -->
+
+            <a class="nav-item nav-link" *ngIf="(loggedIn$ | async) as val"> Logout </a>
+        </div>
+        </div>
+    </div>
+    </div>
+</nav>
+
+<!-- *ngIf="(currentUser$ | async) as username" -->
