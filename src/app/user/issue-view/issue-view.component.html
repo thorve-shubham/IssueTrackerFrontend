@@ -1,0 +1,51 @@
+
+<div *ngIf="spinner">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="found">
+    <h2>Issue Details</h2>
+    <div class="row justify-content-between" >
+        <div class="col-md-8">
+            
+                <mat-card>
+                    <mat-card-title>{{issue.title}}</mat-card-title>
+                    <mat-card-subtitle>
+                        <span [ngStyle]="issue.status === 'In Progress' ? {'color':'yellow'} : 
+                        issue.status === 'Done' ? {'color' : 'lightgreen'} : issue.status === 'Back-Log' ? {'color' : 'red'} : {'color' : 'white'}">
+                            {{issue.status}}
+                        </span>
+                        <br>
+                        <span>Reported On : {{issue.createdOn | date}}</span>
+                    </mat-card-subtitle>
+                    Description :
+                    <mat-card-content>{{issue.description}}</mat-card-content>
+                    Assigned To :
+                    <mat-card-content>{{issue.assignedTo.name}}</mat-card-content>
+                    Reported By :
+                    <mat-card-content>{{issue.reporter.name}}</mat-card-content>
+                    Attachments : 
+                    <mat-card-content *ngFor="let image of issue.attachments">{{image}}</mat-card-content>
+                </mat-card>
+                <br>
+                <mat-card>
+                    <form [formGroup]="commentFormGroup" (ngSubmit)="addComment(commentFormGroup.value)">
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label>Comment</mat-label>
+                            <textarea matInput placeholder="Add a Comment" formControlName="comment"></textarea>
+                        </mat-form-field>
+                        <button type="submit" mat-raised-button color="primary">Comment</button>
+                    </form>
+                </mat-card>
+                
+        </div>
+        
+        <div class="col-md-4">
+            <mat-card>Comments</mat-card>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!found && !spinner">
+    <mat-card>Issue Not Found</mat-card>
+</div>
+

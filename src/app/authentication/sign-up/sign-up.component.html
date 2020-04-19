@@ -1,0 +1,39 @@
+<div class="row justify-content-md-center">
+    <div class="col-md-6">
+        <form [formGroup]="signUpFormGroup" (ngSubmit)="createUser(signUpFormGroup.value)">  
+            <mat-form-field class="example-full-width">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="name"
+                       placeholder="Ex.John Doe">
+                <mat-error [hidden]="!signUpFormGroup.controls.name.touched || signUpFormGroup.controls.name.valid"  >
+                  Name is <strong>Required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email"
+                       placeholder="Ex.John@xyz.com">
+                <mat-error [hidden]="!signUpFormGroup.controls.email.touched || signUpFormGroup.controls.email.valid"  >
+                  Email is <strong>Invalid</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <mat-label>Password</mat-label>
+                <input type="password" matInput formControlName="password">
+                <mat-error [hidden]="!signUpFormGroup.controls.password.touched || signUpFormGroup.controls.password.valid"  >
+                  Password is <strong>Invalid</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <mat-label>Confirm Password</mat-label>
+                <input type="password" matInput formControlName="confirmPassword"
+                       placeholder="Ex.John Doe">
+                <mat-error [hidden]="!signUpFormGroup.controls.confirmPassword.touched || signUpFormGroup.controls.confirmPassword.valid"  >
+                  Password is <strong>Not Matching</strong>
+                </mat-error>
+            </mat-form-field>
+            <br><br>
+            <button mat-raised-button color="primary" class="example-full-width" [disabled]="signUpFormGroup.invalid" type="submit">Sign Up</button>
+        </form>
+    </div>
+</div>

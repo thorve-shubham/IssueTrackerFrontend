@@ -1,0 +1,47 @@
+
+<h2 style="color: white;">Your Issues..</h2>
+<mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium">
+</mat-form-field>
+
+<mat-table  [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="index">
+        <mat-header-cell *matHeaderCellDef ><b>Index</b></mat-header-cell>
+        <mat-cell *matCellDef="let i = index">{{i+1}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><b>Title</b></mat-header-cell>
+        <mat-cell *matCellDef="let issue">{{issue.title}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><b>Reporter</b></mat-header-cell>
+        <mat-cell *matCellDef="let issue">{{issue.reporter.name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><b>Status</b></mat-header-cell>
+        <mat-cell *matCellDef="let issue"><b [ngStyle]="issue.status === 'In Progress' ? {'color':'yellow'} : 
+            issue.status === 'Done' ? {'color' : 'lightgreen'} : issue.status === 'Back-Log' ? {'color' : 'red'} : {'color' : 'white'}">{{issue.status}}</b></mat-cell>
+
+    </ng-container>
+
+    <ng-container matColumnDef="createdOn">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><b>Created On</b></mat-header-cell>
+        <mat-cell *matCellDef="let issue">{{issue.createdOn | date}}</mat-cell>
+
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="['index','title','name','status','createdOn']"></mat-header-row>
+
+    <mat-row (click)="goToIssueDetails(row.issueId)" *matRowDef="let row; columns: ['index','title','name','status','createdOn']"></mat-row>
+
+    
+
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>

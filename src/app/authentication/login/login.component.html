@@ -1,1 +1,48 @@
-<p>login works!</p>
+<!-- <div class="row justify-content-md-center">
+    <div class="col-md-6">
+        <form [formGroup]="logInFormGroup" (ngSubmit)="login(logInFormGroup.value)">  
+            <!-- when using form group ngModel for cerating ref in this html is not possible instead use formgroup to access those elements 
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" name="email" formControlName="email"> 
+            </div>
+            <div class="alert alert-secondary" [hidden]="!logInFormGroup.controls.email.touched || logInFormGroup.controls.email.valid">Invalid Email</div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" formControlName="password"> 
+            </div>
+            <div class="alert alert-secondary" [hidden]="!logInFormGroup.controls.password.touched || logInFormGroup.controls.password.valid">Password is required</div>
+            <button class="btn btn-dark" [disabled]="logInFormGroup.invalid" type="submit">Log In</button>
+        </form>
+    </div>
+</div> -->
+<div class="row justify-content-md-center">
+    <br>
+    <div class="col-md-6">
+        <br>
+        <br>
+        <p class="mat-display-2 " style="color: white;text-align: center;">
+            LogIn Here
+        </p>
+        <form [formGroup]="logInFormGroup" (ngSubmit)="login(logInFormGroup.value)">
+            <mat-form-field class="example-full-width">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email"
+                       placeholder="Ex. pat@example.com">
+                <mat-error [hidden]="!logInFormGroup.controls.email.touched || logInFormGroup.controls.email.valid"  >
+                  Email is <strong>Invalid</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field  class="example-full-width">
+                <mat-label>Password</mat-label>
+                <input type="password" matInput formControlName="password">
+                <mat-error [hidden]="!logInFormGroup.controls.password.touched || logInFormGroup.controls.password.valid">
+                    Password is <strong>Invalid</strong>
+                </mat-error>
+            </mat-form-field>
+            <br><br>
+            <button class="example-full-width" [disabled]="logInFormGroup.invalid" type="submit" mat-raised-button color="primary">Log In</button>
+        </form>
+    </div>
+</div>
+

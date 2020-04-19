@@ -12,7 +12,7 @@ export class AuthService implements CanActivate {
     if(this.authService.isAuthenticated()){
       return true;
     }else{
-      this.router.navigate(["auth/login"]);
+      this.router.navigate(["auth/logIn"]);
     }
   }
 }

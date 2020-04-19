@@ -1,0 +1,11 @@
+
+<h1 style="color: white;">Welcome {{ user }}</h1>
+
+<div class="row justify-content-md-center">
+    <mat-spinner *ngIf="spinner"></mat-spinner> 
+</div>
+<div *ngIf="found && !spinner">
+    <app-issue-list [issues]="issues"></app-issue-list>
+</div>
+
+

@@ -1,0 +1,47 @@
+
+<br>
+<h1 style="color: white;text-align: center;"> Report Issue</h1>
+<br>
+<form [formGroup]="reportIssueFormGroup" (ngSubmit)="reportIssue(reportIssueFormGroup.value)">
+    <mat-form-field class="example-full-width">
+        <mat-label>Reporter</mat-label>
+        <input matInput formControlName="reporter">
+        <mat-error [hidden]="!reportIssueFormGroup.controls.reporter.touched || reportIssueFormGroup.controls.reporter.valid"  >
+          Name is <strong>Required</strong>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title">
+        <mat-error [hidden]="!reportIssueFormGroup.controls.title.touched || reportIssueFormGroup.controls.title.valid"  >
+          Title is <strong>Required</strong>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error [hidden]="!reportIssueFormGroup.controls.description.touched || reportIssueFormGroup.controls.description.valid"  >
+          Description is <strong>Required</strong>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Status</mat-label>
+        <input matInput formControlName="status">
+        <mat-error [hidden]="!reportIssueFormGroup.controls.status.touched || reportIssueFormGroup.controls.status.valid"  >
+          Status is <strong>Required</strong>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Select Assignee</mat-label>
+        <mat-select formControlName="assignedTo">
+            <mat-option selected value> -- select an option -- </mat-option>
+            <mat-option *ngFor="let user of users" [value]="user.userId">{{user.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    
+    <label for="upload" style="color: white;">Upload Attachments</label><br>
+    <input style="color: white;" type="file" (change)="fileChangeEvent($event)" name="upload" multiple/> 
+    <br><br>
+    
+    <button mat-raised-button color="primary" class="example-full-width" [disabled]="reportIssueFormGroup.invalid" type="submit">Report</button>
+</form>
