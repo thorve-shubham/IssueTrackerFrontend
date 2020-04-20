@@ -1,0 +1,14 @@
+<div class="row justify-content-md-center">
+    <div class="col-md-1">
+        <mat-spinner *ngIf="spinner"></mat-spinner>
+    </div>
+</div>
+<div *ngIf="!spinner && found">
+    <app-issue-list [issues]="issues"></app-issue-list>
+</div>
+<div *ngIf="!spinner && !found">
+    <mat-card>Sorry... no issues found based on your search....</mat-card>
+</div>
+
+
+

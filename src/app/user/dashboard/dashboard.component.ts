@@ -2,6 +2,8 @@ import { Component, OnInit, ComponentFactoryResolver } from '@angular/core';
 import { AuthenticationService } from 'src/app/authentication.service';
 import { Issue } from 'src/app/models/issueModel';
 import { UserService } from 'src/app/user.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,14 +16,25 @@ export class DashboardComponent implements OnInit {
   public found : boolean;
   public user : string;
   public spinner : boolean;
+  public searchFormGroup : FormGroup;
+  public title : string;
 
-  constructor(private authService : AuthenticationService,private userService : UserService) { }
+  constructor(private _router : Router,private formBuilder : FormBuilder,private authService : AuthenticationService,private userService : UserService) { }
 
   ngOnInit(): void {
     this.user = this.authService.getUserInfo().name;
     this.authService.setLoginStatus(true);
+
+    this.searchFormGroup = this.formBuilder.group({
+      title : [this.title,[Validators.required]]
+    });
+
     this.spinner = true;
     this.getMyIssues();
+  }
+
+  searchIssue(data){
+    this._router.navigate(['user/search',data.title]);
   }
 
   getMyIssues(){

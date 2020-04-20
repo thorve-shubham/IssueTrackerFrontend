@@ -99,6 +99,6 @@ export class AuthenticationService {
   }
 
   getAllUsers(){
-    return this._http.get("http://localhost:3000/user/get");
+    return this._http.get("http://localhost:3000/user/get"+"?authToken="+localStorage.getItem('authToken'));
   }
 }

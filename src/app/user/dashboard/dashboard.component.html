@@ -1,11 +1,27 @@
 
 <h1 style="color: white;">Welcome {{ user }}</h1>
-
+<div class="row justify-content-md-center">
+    <div class="col-md-5">
+        <form [formGroup]="searchFormGroup" (ngSubmit)="searchIssue(searchFormGroup.value)">
+            <mat-form-field class="example-full-width">
+                <mat-label>Search Issues Here</mat-label>
+                <input matInput formControlName="title">
+                <mat-hint>by title</mat-hint>
+            </mat-form-field>
+            <br><br>
+            <button [disabled]="searchFormGroup.invalid" class="example-full-width" type="submit" mat-raised-button color="primary">Search</button>
+        </form> 
+    </div>
+</div>
+<br><br>
 <div class="row justify-content-md-center">
     <mat-spinner *ngIf="spinner"></mat-spinner> 
 </div>
 <div *ngIf="found && !spinner">
     <app-issue-list [issues]="issues"></app-issue-list>
+</div>
+<div *ngIf="!found && !spinner">
+    <mat-card>No issues assigned to you yet</mat-card>
 </div>
 
 

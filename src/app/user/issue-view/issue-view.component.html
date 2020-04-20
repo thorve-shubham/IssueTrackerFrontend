@@ -1,51 +1,120 @@
 
-<div *ngIf="spinner">
-    <mat-spinner></mat-spinner>
-</div>
-<div *ngIf="found">
-    <h2>Issue Details</h2>
-    <div class="row justify-content-between" >
-        <div class="col-md-8">
-            
-                <mat-card>
-                    <mat-card-title>{{issue.title}}</mat-card-title>
-                    <mat-card-subtitle>
-                        <span [ngStyle]="issue.status === 'In Progress' ? {'color':'yellow'} : 
-                        issue.status === 'Done' ? {'color' : 'lightgreen'} : issue.status === 'Back-Log' ? {'color' : 'red'} : {'color' : 'white'}">
-                            {{issue.status}}
-                        </span>
-                        <br>
-                        <span>Reported On : {{issue.createdOn | date}}</span>
-                    </mat-card-subtitle>
-                    Description :
-                    <mat-card-content>{{issue.description}}</mat-card-content>
-                    Assigned To :
-                    <mat-card-content>{{issue.assignedTo.name}}</mat-card-content>
-                    Reported By :
-                    <mat-card-content>{{issue.reporter.name}}</mat-card-content>
-                    Attachments : 
-                    <mat-card-content *ngFor="let image of issue.attachments">{{image}}</mat-card-content>
-                </mat-card>
-                <br>
-                <mat-card>
-                    <form [formGroup]="commentFormGroup" (ngSubmit)="addComment(commentFormGroup.value)">
-                        <mat-form-field appearance="outline" class="example-full-width">
-                            <mat-label>Comment</mat-label>
-                            <textarea matInput placeholder="Add a Comment" formControlName="comment"></textarea>
-                        </mat-form-field>
-                        <button type="submit" mat-raised-button color="primary">Comment</button>
-                    </form>
-                </mat-card>
+ 
+
+    
+<div class="row justify-content-between" >
+    <div class="col-md-8">
+        <div *ngIf="issueSpinner">
+            <mat-spinner></mat-spinner>
+        </div> 
+        <div *ngIf="found">
+            <mat-card>
+                <mat-card-title>{{issue.title}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span *ngIf="!(issue.assignedTo.userId == currentUser) || !(issue.reporter.userId == currentUser)
+                    || ((issue.assignedTo.userId == currentUser) && (issue.reporter.userId == currentUser))">
+                    <button *ngIf="!watching" (click)="startWatching()" mat-raised-button color="primary">Watch</button>
+                    <button *ngIf="watching" [disabled]="(issue.assignedTo.userId == currentUser) || (issue.reporter.userId == currentUser)" (click)="stopWatching()"  mat-raised-button color="primary">Stop Watching</button>
+                </span>
+                </mat-card-title>
+                <mat-card-subtitle>
+                    <span [ngStyle]="issue.status === 'In Progress' ? {'color':'yellow'} : 
+                    issue.status === 'Done' ? {'color' : 'lightgreen'} : issue.status === 'Back-Log' ? {'color' : 'red'} : {'color' : 'white'}">
+                        {{issue.status}}
+                    </span>
+                    <br>
+                    <span>Reported On : {{issue.createdOn | date}}</span>
+                </mat-card-subtitle>
+                <h2 style="color: white;">Description :</h2>
+                <editor
+          initialValue="<p>Initial content of the editor</p>"
+          apiKey = "acxa6cwfwdery60peo08jy721sd3mi3h99h9s4mqnyumhz7i"
+          [init]="{
+            height: 200,
+            menubar: false,
+            plugins: [
+              'advlist autolink lists link image charmap print',
+              'preview anchor searchreplace visualblocks code',
+              'fullscreen insertdatetime media table paste',
+              'help wordcount'
+            ],
+            toolbar:
+              'undo redo | formatselect | bold italic | \
+              alignleft aligncenter alignright alignjustify | \
+              bullist numlist outdent indent | help'
+          }"
+         [(ngModel)]="issue.description">
+        </editor>
+        <br>
+                <!-- <mat-form-field class="example-full-width">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput type="text" [(ngModel)]="issue.description"></textarea>
+                </mat-form-field> -->
+                <mat-form-field class="example-full-width">
+                    <mat-label>Change Assignee</mat-label>
+                    <mat-select [(ngModel)]="currentAssignee.userId" [value]="currentAssignee.userId">
+                        <mat-option *ngFor="let user of users" [value]="user.userId">{{user.name}}</mat-option>
+                        <!-- [(ngModel)]="issue.assignedTo.userId" -->
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Status</mat-label>
+                    <mat-select [(ngModel)]="issue.status" [value]="issue.status">
+                        <mat-option value="In Progress">In Progress</mat-option>
+                        <mat-option value="Back-Log">Back-Log</mat-option>
+                        <mat-option value="Done">Done</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-raised-button (click)="updateIssue()" color="primary">Update</button><br><br>
+                Reported By :
+                <mat-card-content>{{issue.reporter.name}}</mat-card-content>
                 
+                Attachments : <br>
+                <mat-card-content *ngFor="let image of issue.attachments">
+                    <span style="cursor: pointer;" (click)="downloadAttachment(image)">{{image}}</span>  
+                    <mat-icon style="cursor: pointer;" (click)="deleteAttachment(image)">delete</mat-icon>
+                </mat-card-content>
+                
+                
+                <input style="color: white;" type="file" (change)="fileChangeEvent($event)" name="upload" multiple/> 
+                <button mat-raised-button (click)="addAttachment()" color="primary">Add</button>
+            </mat-card>
+            <br>
+            <mat-card>
+                <form [formGroup]="commentFormGroup" (ngSubmit)="addComment(commentFormGroup.value)">
+                    <mat-form-field appearance="outline" class="example-full-width">
+                        <mat-label>Comment</mat-label>
+                        <textarea matInput placeholder="Add a Comment" formControlName="comment"></textarea>
+                    </mat-form-field>
+                    <button type="submit" mat-raised-button color="primary">Comment</button>
+                </form>
+            </mat-card>
+            <div *ngIf="!found && !issueSpinner">
+                <mat-card>Issue Not Found</mat-card>
+            </div>
         </div>
+    </div>
+    
+    <div class="col-md-4">
         
-        <div class="col-md-4">
-            <mat-card>Comments</mat-card>
+        <mat-spinner *ngIf="commentSpinner"></mat-spinner>
+        <div *ngIf="commentFound">
+            <mat-card>Comments : <br><hr>
+                <p *ngFor="let comment of comments;let last = last">
+                    {{comment.commentor.name}} : <br>
+                    <mat-card-subtitle>{{comment.createdOn | date}}</mat-card-subtitle>
+                    {{comment.comment}}
+                    <span *ngIf="!last"><hr></span>
+                </p>
+            </mat-card>
+        </div>
+        <div *ngIf="!commentFound && !commentSpinner">
+            <mat-card>
+                Comments Does not Exist
+            </mat-card>
         </div>
     </div>
 </div>
 
-<div *ngIf="!found && !spinner">
-    <mat-card>Issue Not Found</mat-card>
-</div>
+
+
 

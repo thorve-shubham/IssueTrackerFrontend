@@ -17,13 +17,29 @@
           Title is <strong>Required</strong>
         </mat-error>
     </mat-form-field>
-    <mat-form-field class="example-full-width">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-        <mat-error [hidden]="!reportIssueFormGroup.controls.description.touched || reportIssueFormGroup.controls.description.valid"  >
-          Description is <strong>Required</strong>
-        </mat-error>
-    </mat-form-field>
+    <h3 style="color: white;">Description : </h3>
+        <editor
+          initialValue="<p>Initial content of the editor</p>"
+          apiKey = "acxa6cwfwdery60peo08jy721sd3mi3h99h9s4mqnyumhz7i"
+          [init]="{
+            height: 200,
+            menubar: false,
+            plugins: [
+              'advlist autolink lists link image charmap print',
+              'preview anchor searchreplace visualblocks code',
+              'fullscreen insertdatetime media table paste',
+              'help wordcount'
+            ],
+            toolbar:
+              'undo redo | formatselect | bold italic | \
+              alignleft aligncenter alignright alignjustify | \
+              bullist numlist outdent indent | help'
+          }"
+         formControlName="description">
+        </editor>
+        <br>
+        <mat-card color="primary" [hidden]="!reportIssueFormGroup.controls.description.touched || reportIssueFormGroup.controls.description.valid">Description is Needed</mat-card>
+        <br>
     <mat-form-field class="example-full-width">
         <mat-label>Status</mat-label>
         <input matInput formControlName="status">
@@ -44,4 +60,6 @@
     <br><br>
     
     <button mat-raised-button color="primary" class="example-full-width" [disabled]="reportIssueFormGroup.invalid" type="submit">Report</button>
+
+    
 </form>
