@@ -9,8 +9,6 @@ import { CommentModel } from './models/commentModel';
 })
 export class UserService {
 
- 
-
   constructor(private _http : HttpClient,private authService : AuthenticationService) {
    
   }

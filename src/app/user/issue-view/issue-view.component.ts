@@ -6,11 +6,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommentModel } from 'src/app/models/commentModel';
 import { saveAs } from 'file-saver';
+import { SocketService } from 'src/app/socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-issue-view',
   templateUrl: './issue-view.component.html',
   styleUrls: ['./issue-view.component.css'],
+  providers : [SocketService]
 })
 export class IssueViewComponent implements OnInit {
   public issueId: string;
@@ -27,15 +30,19 @@ export class IssueViewComponent implements OnInit {
   public watching : boolean;
   public currentUser = this.authService.getUserInfo().userId;
   public currentAssignee : any;
+  public deleting : boolean = false;
+  public adding : boolean = false;
+  public socketObserver : Subscription;
 
-  @ViewChild('select') select : ElementRef;
 
   constructor(
     private _snackBar: MatSnackBar,
     private _router: ActivatedRoute,
     private userService: UserService,
     private authService: AuthenticationService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private _socket : SocketService,
+    private router : Router,
   ) {
     this.authService.setLoginStatus(true);
     this.found = false;
@@ -59,22 +66,45 @@ export class IssueViewComponent implements OnInit {
     });
 
     this.getComment();
+
+    this.listenToEvents();
+  }
+
+  listenToEvents(){
+    this.socketObserver = this._socket.listenToEvent(this.authService.getUserInfo().userId).subscribe(
+      data=>{
+        if(data.issueId == this.issue.issueId){
+          this.getCurrentIssue();
+          this.getComment();
+        }
+        else{
+          this.showNotification(data);
+        }
+      }
+    )
+  }
+
+  showNotification(data){
+    let notification = this._snackBar.open("Issue : "+data.issueTitle+" Update : "+data.message,"Open",{duration : 4000});
+
+    notification.onAction().subscribe(()=>{
+      this.router.navigate(['user/viewIssue',data.issueId]);
+    })
   }
 
   getCurrentIssue(){
+    this.found= false;
+    this.issueSpinner = false;
     this.userService.getIssue(this.issueId).subscribe(
       (data) => {
         if (data['error']) {
-          console.log(data);
           this.issueSpinner = false;
           console.log(data['message']);
         } else {
           this.issueSpinner = false;
           this.found = true;
           this.issue = data['data'];
-          console.log('Got issue');
-          this.currentAssignee = data["data"].assignedTo;
-          console.log(this.currentAssignee);
+          this.currentAssignee = data["data"].assignedTo.userId;
           this.isWatching();
         }
       },
@@ -90,6 +120,7 @@ export class IssueViewComponent implements OnInit {
       data=>{
         this.issue = data["data"];
         this.isWatching();
+        this._socket.emitWatchersModified(this.issueId);
       }
     )
   }
@@ -99,6 +130,7 @@ export class IssueViewComponent implements OnInit {
       data=>{
         this.issue = data["data"];
         this.isWatching();
+        this._socket.emitWatchersModified(this.issueId);
       }
     )
   }
@@ -115,12 +147,12 @@ export class IssueViewComponent implements OnInit {
   }
 
   getComment() {
+    this.commentFound = false;
     this.commentSpinner = true;
     this.userService.getComment(this.issueId).subscribe(
       (data) => {
         if (data['error']) {
           this.commentSpinner = false;
-          console.log('no comments');
         } else {
           this.commentSpinner = false;
           this.commentFound = true;
@@ -154,6 +186,7 @@ export class IssueViewComponent implements OnInit {
             console.log(data['message']);
           } else {
             this.getComment();
+            this._socket.emitComment({userName : this.authService.getUserInfo().name,issueId : this.issueId});
           }
         },
         (err) => {
@@ -165,16 +198,15 @@ export class IssueViewComponent implements OnInit {
 
   updateIssue() {
     if(this.issue.description!=null && this.issue.description!=undefined && this.issue.description!=""){
-      this.issue.assignedTo.userId =  this.currentAssignee.userId;
+      this.issue.assignedTo.userId =  this.currentAssignee;
       this.userService.updateIssue(this.issueId, this.issue).subscribe(
         (data) => {
           if (data['error']) {
-            console.log('update failed');
             console.log(data['message']);
           } else {
-            console.log('updated');
             this.issue = data['data'];
             this.isWatching();
+            this._socket.emitIssueModified(this.issueId);
           }
         },
         (err) => {
@@ -190,19 +222,29 @@ export class IssueViewComponent implements OnInit {
 
   fileChangeEvent(event) {
     this.files = event.target.files;
-    console.log(this.files);
   }
 
   addAttachment() {
     if (this.files != null && this.files != undefined && this.files != '') {
+      this.adding = true;
       let formData = new FormData();
       for (let file of this.files) {
         formData.append('file', file);
       }
-      this.userService
-        .addAttachments(this.issueId, formData)
-        .subscribe((data) => {
-          this.issue.attachments = data['data'];
+      this.userService.addAttachments(this.issueId, formData).subscribe(
+        data => {
+          if(data["error"]){
+            this.adding = false;
+            console.log(data["message"]);
+          }else{
+            this.adding = false;
+            this.issue.attachments = data['data'];
+            this._socket.emitAttachmentsModified(this.issueId);
+          }   
+        },
+        err=>{
+          this.adding = false;
+          console.log("something went wrong");
         });
     }else{
       this._snackBar.open("Attach Data First","Dismiss",{
@@ -212,22 +254,26 @@ export class IssueViewComponent implements OnInit {
   }
 
   deleteAttachment(filename) {
+    this.deleting = true;
     this.userService.deleteAttachment(this.issueId, filename).subscribe(
       (data) => {
         if (data['error']) {
+          this.deleting = false;
           console.log(data['message']);
         } else {
+          this.deleting = false;
           this.issue.attachments = data['data'];
+          this._socket.emitAttachmentsModified(this.issueId);
         }
       },
       (err) => {
+        this.deleting = false;
         console.log('Something went wrong');
       }
     );
   }
 
   downloadAttachment(filename) {
-    console.log('ala');
     this.userService.downloadAttachment(filename).subscribe(
       (data) => {
         saveAs(data, filename);

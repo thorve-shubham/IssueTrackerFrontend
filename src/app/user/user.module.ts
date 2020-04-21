@@ -9,6 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { IssueViewComponent } from './issue-view/issue-view.component';
 import { SearchViewComponent } from './search-view/search-view.component';
 import { EditorModule } from '@tinymce/tinymce-angular';
+import { SocketService } from '../socket.service';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { EditorModule } from '@tinymce/tinymce-angular';
     ReactiveFormsModule,
     MaterialModule,
     EditorModule,
-  ]
+  ],
+  
 })
 export class UserModule { }

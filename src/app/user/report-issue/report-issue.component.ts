@@ -1,27 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/authentication.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Issue } from 'src/app/models/issueModel';
 import { UserService } from 'src/app/user.service';
 import { generate } from 'shortid';
+import { Router } from '@angular/router';
+import { SocketService } from 'src/app/socket.service';
+import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-report-issue',
   templateUrl: './report-issue.component.html',
-  styleUrls: ['./report-issue.component.css']
+  styleUrls: ['./report-issue.component.css'],
+  providers : [SocketService]
 })
-export class ReportIssueComponent implements OnInit {
+export class ReportIssueComponent implements OnInit,OnDestroy {
 
   public reportIssueFormGroup : FormGroup;
   public issue : Issue;
   public users : any;
   public files : any;
+  public reporting : boolean = false;
+  public socketObserver : Subscription;
 
-  constructor(private authService : AuthenticationService, private formBuilder : FormBuilder, private userService : UserService) { 
+  constructor(private _snackBar : MatSnackBar,private socket : SocketService,private _router : Router,private authService : AuthenticationService, private formBuilder : FormBuilder, private userService : UserService) { 
     this.issue = new Issue();
     this.issue.reporter = authService.getUserInfo().name;
     this.issue.status = "In Progress";
     this.issue.seen = false;
+  }
+  ngOnDestroy(): void {
+    this.socketObserver.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -38,11 +48,31 @@ export class ReportIssueComponent implements OnInit {
       data=>{
         this.users = data["data"];
       }
-    )
+    );
+
+    this.listenToEvents();
     
   }
 
+  listenToEvents(){
+    this.socketObserver = this.socket.listenToEvent(this.authService.getUserInfo().userId).subscribe(
+      data=>{
+        this.showNotification(data);
+      }
+    )
+  }
+
+  showNotification(data){
+    let notification = this._snackBar.open("Issue : "+data.issueTitle+" Update : "+data.message,"Open",{duration : 4000});
+
+    notification.onAction().subscribe(()=>{
+      this._router.navigate(['user/viewIssue',data.issueId]);
+    })
+  }
+
   reportIssue(newIssue){
+    
+    this.reporting = true;
     //this.issue.attachments = this.files;
     this.issue.reporter = this.authService.getUserInfo().userId;  
     this.issue.issueId = generate();
@@ -60,25 +90,30 @@ export class ReportIssueComponent implements OnInit {
       
     
     this.userService.reportIssue(this.issue).subscribe(
-      data=>{
-        if(data["error"]){
-          console.log("failed");
+      res=>{
+        if(res["error"]){
+          this.reporting = false;
+          console.log(res["message"]);
         }else{
           if(this.files!=undefined && this.files !=null && this.files != ""){
-            this.userService.addAttachments(data["data"].issueId,formData).subscribe(
+            this.userService.addAttachments(res["data"].issueId,formData).subscribe(
               data=>{
+                this.reporting = false;
                 if(!data["error"]){
-                  console.log("Issue Reported");
+                  this._router.navigate(["user/viewIssue",res["data"].issueId]);
                 }
                 else{
-                  console.log("somthing went wrong");
+                  console.log(data["message"]);
                 }
               },
               err=>{
+                this.reporting = false;
                 console.log("something went wrong")
               }
             );
           }
+          this.reporting = false;
+          this._router.navigate(['user/viewIssue',res['data'].issueId]);
         }
       },
       err=>{

@@ -4,11 +4,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/user.service';
+import { SocketService } from 'src/app/socket.service';
 
 @Component({
   selector: 'app-issue-list',
   templateUrl: './issue-list.component.html',
-  styleUrls: ['./issue-list.component.css']
+  styleUrls: ['./issue-list.component.css'],
 })
 export class IssueListComponent implements OnInit {
 

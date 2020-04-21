@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import * as jwt from 'jwt-decode'; 
 import { signUpModel } from './models/signUpModel';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthenticationService {
   private loginStatus = new BehaviorSubject<boolean>(false);
   private currentUser = new BehaviorSubject<string>(localStorage.getItem('userName'));
 
-  constructor(public _http:HttpClient, public router:Router) {
+  constructor(public _http:HttpClient, public router:Router,private _snackBar : MatSnackBar) {
     
   }
 
@@ -33,7 +34,7 @@ export class AuthenticationService {
     this._http.post("http://localhost:3000/user/login",data).subscribe(
       data=>{
         if(data["error"]){
-          console.log("error");
+          this._snackBar.open(data["message"],"Dismiss",{duration : 4000});
         }else{
           this.loginStatus.next(true);
           localStorage.setItem('authToken',data['data']);
@@ -46,7 +47,7 @@ export class AuthenticationService {
         }
       },
       err=>{
-        console.log('err');
+        console.log(err);
       }
     );
   }
@@ -57,20 +58,18 @@ export class AuthenticationService {
         if(data["error"]==null){
           this.router.navigate(["auth/logIn"]);
         }else{
-          //something went wrong
+          this._snackBar.open(data["message"],"Dismiss",{duration : 4000});
         }
       },
       error=>{
-        //something went wrong
+        console.log("Something went Wrong");
       }
     );
   }
 
   isAuthenticated(){
     const token = localStorage.getItem('authToken');
-    //console.log('checking auth');
     if(!token){
-      //this.toastr.errorToastr("Access Denied","Oops!");
       return false;
     }else{
       try{
@@ -78,7 +77,6 @@ export class AuthenticationService {
         return true;
       }
       catch(err){
-        
         return false;
       }
     }

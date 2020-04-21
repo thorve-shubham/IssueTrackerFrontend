@@ -42,7 +42,7 @@
               alignleft aligncenter alignright alignjustify | \
               bullist numlist outdent indent | help'
           }"
-         [(ngModel)]="issue.description">
+         [(ngModel)]="issue.description" [disabled]="issue.reporter.userId != currentUser">
         </editor>
         <br>
                 <!-- <mat-form-field class="example-full-width">
@@ -51,7 +51,7 @@
                 </mat-form-field> -->
                 <mat-form-field class="example-full-width">
                     <mat-label>Change Assignee</mat-label>
-                    <mat-select [(ngModel)]="currentAssignee.userId" [value]="currentAssignee.userId">
+                    <mat-select [(ngModel)]="currentAssignee" [value]="currentAssignee">
                         <mat-option *ngFor="let user of users" [value]="user.userId">{{user.name}}</mat-option>
                         <!-- [(ngModel)]="issue.assignedTo.userId" -->
                     </mat-select>
@@ -71,12 +71,14 @@
                 Attachments : <br>
                 <mat-card-content *ngFor="let image of issue.attachments">
                     <span style="cursor: pointer;" (click)="downloadAttachment(image)">{{image}}</span>  
-                    <mat-icon style="cursor: pointer;" (click)="deleteAttachment(image)">delete</mat-icon>
+                    <mat-icon [hidden]="issue.reporter.userId != currentUser" style="cursor: pointer;" (click)="deleteAttachment(image)">delete</mat-icon>
+                    
                 </mat-card-content>
+                <mat-spinner *ngIf="deleting" diameter="30"></mat-spinner>
                 
-                
-                <input style="color: white;" type="file" (change)="fileChangeEvent($event)" name="upload" multiple/> 
-                <button mat-raised-button (click)="addAttachment()" color="primary">Add</button>
+                <input [hidden]="issue.reporter.userId != currentUser" style="color: white;" type="file" (change)="fileChangeEvent($event)" name="upload" multiple/> 
+                <button [hidden]="issue.reporter.userId != currentUser" mat-raised-button [disabled]="adding" (click)="addAttachment()" color="primary">Add</button>
+                <mat-spinner diameter= "30" *ngIf="adding"></mat-spinner>
             </mat-card>
             <br>
             <mat-card>
@@ -95,7 +97,15 @@
     </div>
     
     <div class="col-md-4">
-        
+        <span *ngIf="found">
+            <mat-card>
+                Watchers : <br><hr>
+                <span *ngFor="let watcher of issue.watchers;let last=last">
+                    {{watcher.name}}<br>
+                </span>
+            </mat-card>
+        </span>
+        <br>
         <mat-spinner *ngIf="commentSpinner"></mat-spinner>
         <div *ngIf="commentFound">
             <mat-card>Comments : <br><hr>

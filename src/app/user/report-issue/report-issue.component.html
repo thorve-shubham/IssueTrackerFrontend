@@ -59,7 +59,8 @@
     <input style="color: white;" type="file" (change)="fileChangeEvent($event)" name="upload" multiple/> 
     <br><br>
     
-    <button mat-raised-button color="primary" class="example-full-width" [disabled]="reportIssueFormGroup.invalid" type="submit">Report</button>
+    <button mat-raised-button color="primary" class="example-full-width" [disabled]="reportIssueFormGroup.invalid || reporting" type="submit">Report</button>
+    <mat-spinner diameter="30" *ngIf="reporting"></mat-spinner>
 
     
 </form>
