@@ -21,28 +21,33 @@
     <div class="col-md-6">
         <br>
         <br>
-        <p class="mat-display-2 " style="color: white;text-align: center;">
-            LOGIN
-        </p>
-        <form [formGroup]="logInFormGroup" (ngSubmit)="login(logInFormGroup.value)">
-            <mat-form-field class="example-full-width">
-                <mat-label>Email</mat-label>
-                <input matInput formControlName="email"
-                       placeholder="Ex. pat@example.com">
-                <mat-error [hidden]="!logInFormGroup.controls.email.touched || logInFormGroup.controls.email.valid"  >
-                  Email is <strong>Invalid</strong>
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field  class="example-full-width">
-                <mat-label>Password</mat-label>
-                <input type="password" matInput formControlName="password">
-                <mat-error [hidden]="!logInFormGroup.controls.password.touched || logInFormGroup.controls.password.valid">
-                    Password is <strong>Invalid</strong>
-                </mat-error>
-            </mat-form-field>
-            <br><br>
-            <button class="example-full-width" [disabled]="logInFormGroup.invalid" type="submit" mat-raised-button color="primary">Log In</button>
-        </form>
+        <mat-card>
+
+        
+            <p class="mat-display-2 " style="color: white;text-align: center;">
+                LOGIN
+            </p>
+            <form [formGroup]="logInFormGroup" (ngSubmit)="login(logInFormGroup.value)">
+                <mat-form-field class="example-full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email"
+                        placeholder="Ex. pat@example.com">
+                    <mat-error [hidden]="!logInFormGroup.controls.email.touched || logInFormGroup.controls.email.valid"  >
+                    Email is <strong>Invalid</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field  class="example-full-width">
+                    <mat-label>Password</mat-label>
+                    <input type="password" matInput formControlName="password">
+                    <mat-error [hidden]="!logInFormGroup.controls.password.touched || logInFormGroup.controls.password.valid">
+                        Password is <strong>Invalid</strong>
+                    </mat-error>
+                </mat-form-field>
+                <br><br>
+                <button class="example-full-width" [disabled]="logInFormGroup.invalid" type="submit" mat-raised-button color="primary">Log In</button>
+                <br><br><br>
+            </form>
+        </mat-card>
     </div>
 </div>
 

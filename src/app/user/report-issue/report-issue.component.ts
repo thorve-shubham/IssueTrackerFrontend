@@ -111,12 +111,14 @@ export class ReportIssueComponent implements OnInit,OnDestroy {
                 console.log("something went wrong")
               }
             );
+          }else{
+            this.reporting = false;
+            this._router.navigate(['user/viewIssue',res['data'].issueId]);
           }
-          this.reporting = false;
-          this._router.navigate(['user/viewIssue',res['data'].issueId]);
         }
       },
       err=>{
+        this.reporting = false;
         console.log("Something went Wrong");
       }
     );
