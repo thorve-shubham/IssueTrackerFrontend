@@ -14,53 +14,53 @@ export class UserService {
   }
 
   reportIssue(issue:Issue){
-    return this._http.post("api.shubhamthorvetest.in/issue/create?authToken="+localStorage.getItem('authToken'),issue);
+    return this._http.post("http://api.shubhamthorvetest.in/issue/create?authToken="+localStorage.getItem('authToken'),issue);
   }
 
   addAttachments(issueId,files){
-    return this._http.post("api.shubhamthorvetest.in/attachment/create/"+issueId+"?authToken="+localStorage.getItem('authToken'),files);
+    return this._http.post("http://api.shubhamthorvetest.in/attachment/create/"+issueId+"?authToken="+localStorage.getItem('authToken'),files);
   }
 
   getMyIssues(){
 
-    return this._http.get("api.shubhamthorvetest.in/issue/get/assignedTo/"+this.authService.getUserInfo().userId+"?authToken="+localStorage.getItem('authToken')); 
+    return this._http.get("http://api.shubhamthorvetest.in/issue/get/assignedTo/"+this.authService.getUserInfo().userId+"?authToken="+localStorage.getItem('authToken')); 
   }
 
   addComment(comment: CommentModel){
-    return this._http.post("api.shubhamthorvetest.in/comment/add"+"?authToken="+localStorage.getItem('authToken'),comment);
+    return this._http.post("http://api.shubhamthorvetest.in/comment/add"+"?authToken="+localStorage.getItem('authToken'),comment);
   }
 
   getIssue(issueId : string){
-    return this._http.get("api.shubhamthorvetest.in/issue/get/issue/"+issueId+"?authToken="+localStorage.getItem('authToken'));
+    return this._http.get("http://api.shubhamthorvetest.in/issue/get/issue/"+issueId+"?authToken="+localStorage.getItem('authToken'));
   }
 
   getComment(issueId){
-    return this._http.get("api.shubhamthorvetest.in/comment/get/"+issueId+"?authToken="+localStorage.getItem('authToken'));
+    return this._http.get("http://api.shubhamthorvetest.in/comment/get/"+issueId+"?authToken="+localStorage.getItem('authToken'));
   }
 
   updateIssue(issueId,issue){
-    return this._http.put("api.shubhamthorvetest.in/issue/update/"+issueId+"?authToken="+localStorage.getItem('authToken'),issue)
+    return this._http.put("http://api.shubhamthorvetest.in/issue/update/"+issueId+"?authToken="+localStorage.getItem('authToken'),issue)
   }
 
   deleteAttachment(issueId,filename){
-    return this._http.put("api.shubhamthorvetest.in/attachment/delete/"+issueId+"?authToken="+localStorage.getItem('authToken'),{filename : filename});
+    return this._http.put("http://api.shubhamthorvetest.in/attachment/delete/"+issueId+"?authToken="+localStorage.getItem('authToken'),{filename : filename});
   }
 
   downloadAttachment(filename){
-    return this._http.get("api.shubhamthorvetest.in/attachment/download/"+filename+"?authToken="+localStorage.getItem('authToken'),{
+    return this._http.get("http://api.shubhamthorvetest.in/attachment/download/"+filename+"?authToken="+localStorage.getItem('authToken'),{
       responseType : 'blob'
     });
   }
 
   searchIssue(title){
-    return this._http.get("api.shubhamthorvetest.in/issue/search/"+title+"?authToken="+localStorage.getItem('authToken'));
+    return this._http.get("http://api.shubhamthorvetest.in/issue/search/"+title+"?authToken="+localStorage.getItem('authToken'));
   }
 
   addWatcher(issueId,userId){
-    return this._http.post("api.shubhamthorvetest.in/issue/addWatcher/"+issueId+"?authToken="+localStorage.getItem('authToken'),{userId : userId});
+    return this._http.post("http://api.shubhamthorvetest.in/issue/addWatcher/"+issueId+"?authToken="+localStorage.getItem('authToken'),{userId : userId});
   }
 
   removeWatcher(issueId,userId){
-    return this._http.post("api.shubhamthorvetest.in/issue/removeWatcher/"+issueId+"?authToken="+localStorage.getItem('authToken'),{userId : userId});
+    return this._http.post("http://api.shubhamthorvetest.in/issue/removeWatcher/"+issueId+"?authToken="+localStorage.getItem('authToken'),{userId : userId});
   }
 }
