@@ -31,7 +31,7 @@ export class AuthenticationService {
   } 
 
   login(data){
-    this._http.post("http://localhost:3000/user/login",data).subscribe(
+    this._http.post("api.shubhamthorvetest.in/user/login",data).subscribe(
       data=>{
         if(data["error"]){
           this._snackBar.open(data["message"],"Dismiss",{duration : 4000});
@@ -53,7 +53,7 @@ export class AuthenticationService {
   }
 
   signUpUser(userData:signUpModel){
-    this._http.post("http://localhost:3000/user/create",userData).subscribe(
+    this._http.post("api.shubhamthorvetest.in/user/create",userData).subscribe(
       data=>{
         if(data["error"]==null){
           this.router.navigate(["auth/logIn"]);
@@ -97,6 +97,6 @@ export class AuthenticationService {
   }
 
   getAllUsers(){
-    return this._http.get("http://localhost:3000/user/get"+"?authToken="+localStorage.getItem('authToken'));
+    return this._http.get("api.shubhamthorvetest.in/user/get"+"?authToken="+localStorage.getItem('authToken'));
   }
 }
