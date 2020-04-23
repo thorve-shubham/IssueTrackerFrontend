@@ -3,6 +3,8 @@
         <mat-spinner *ngIf="spinner"></mat-spinner>
     </div>
 </div>
+<button mat-raised-button (click)="goBack()" color="primary">Back</button>
+<br><br>
 <div *ngIf="!spinner && found">
     <app-issue-list [issues]="issues"></app-issue-list>
 </div>

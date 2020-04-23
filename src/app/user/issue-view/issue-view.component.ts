@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/app/user.service';
 import { AuthenticationService } from 'src/app/authentication.service';
@@ -8,14 +8,15 @@ import { CommentModel } from 'src/app/models/commentModel';
 import { saveAs } from 'file-saver';
 import { SocketService } from 'src/app/socket.service';
 import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-issue-view',
   templateUrl: './issue-view.component.html',
   styleUrls: ['./issue-view.component.css'],
-  providers : [SocketService]
+  providers : [SocketService,Location]
 })
-export class IssueViewComponent implements OnInit {
+export class IssueViewComponent implements OnInit,OnDestroy {
   public issueId: string;
   public issue: any;
   public found: boolean;
@@ -43,6 +44,7 @@ export class IssueViewComponent implements OnInit {
     private formBuilder: FormBuilder,
     private _socket : SocketService,
     private router : Router,
+    private location : Location,
   ) {
     this.authService.setLoginStatus(true);
     this.found = false;
@@ -54,6 +56,10 @@ export class IssueViewComponent implements OnInit {
     this.commentFormGroup = this.formBuilder.group({
       comment: [this.comment, []],
     });
+  }
+
+  ngOnDestroy(){
+    this.socketObserver.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -68,6 +74,10 @@ export class IssueViewComponent implements OnInit {
     this.getComment();
 
     this.listenToEvents();
+  }
+
+  goBack(){
+    this.location.back();
   }
 
   listenToEvents(){

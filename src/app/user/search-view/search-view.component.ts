@@ -5,12 +5,13 @@ import { UserService } from 'src/app/user.service';
 import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/socket.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-search-view',
   templateUrl: './search-view.component.html',
   styleUrls: ['./search-view.component.css'],
-  providers : [SocketService]
+  providers : [SocketService,Location]
 })
 export class SearchViewComponent implements OnInit ,OnDestroy{
 
@@ -20,7 +21,7 @@ export class SearchViewComponent implements OnInit ,OnDestroy{
   public found : boolean;
   public socketObserver : Subscription;
 
-  constructor(private _router : Router,private _snackBar : MatSnackBar,private socket :SocketService,private authService : AuthenticationService,private router : ActivatedRoute,private userService : UserService) {
+  constructor(private location: Location,private _router : Router,private _snackBar : MatSnackBar,private socket :SocketService,private authService : AuthenticationService,private router : ActivatedRoute,private userService : UserService) {
     this.spinner = true;
     this.found = false;
     this.title = router.snapshot.paramMap.get('title');
@@ -59,6 +60,10 @@ export class SearchViewComponent implements OnInit ,OnDestroy{
     );
   }
 
+  goBack(){
+    this.location.back();
+  }
+
   listenToEvents(){
     this.socketObserver = this.socket.listenToEvent(this.authService.getUserInfo().userId).subscribe(
       data=>{
@@ -73,7 +78,7 @@ export class SearchViewComponent implements OnInit ,OnDestroy{
 
     notification.onAction().subscribe(()=>{
       this._router.navigate(['user/viewIssue',data.issueId]);
-    })
+    });
   }
 
 }

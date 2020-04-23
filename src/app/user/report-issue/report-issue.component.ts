@@ -8,12 +8,13 @@ import { Router } from '@angular/router';
 import { SocketService } from 'src/app/socket.service';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-report-issue',
   templateUrl: './report-issue.component.html',
   styleUrls: ['./report-issue.component.css'],
-  providers : [SocketService]
+  providers : [SocketService,Location]
 })
 export class ReportIssueComponent implements OnInit,OnDestroy {
 
@@ -24,12 +25,17 @@ export class ReportIssueComponent implements OnInit,OnDestroy {
   public reporting : boolean = false;
   public socketObserver : Subscription;
 
-  constructor(private _snackBar : MatSnackBar,private socket : SocketService,private _router : Router,private authService : AuthenticationService, private formBuilder : FormBuilder, private userService : UserService) { 
+  constructor(private location : Location,private _snackBar : MatSnackBar,private socket : SocketService,private _router : Router,private authService : AuthenticationService, private formBuilder : FormBuilder, private userService : UserService) { 
     this.issue = new Issue();
     this.issue.reporter = authService.getUserInfo().name;
     this.issue.status = "In Progress";
     this.issue.seen = false;
   }
+
+  goBack(){
+    this.location.back();
+  }
+
   ngOnDestroy(): void {
     this.socketObserver.unsubscribe();
   }

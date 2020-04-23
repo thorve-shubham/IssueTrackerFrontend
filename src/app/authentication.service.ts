@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import * as jwt from 'jwt-decode'; 
 import { signUpModel } from './models/signUpModel';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import * as jwt from 'jwt-decode'; 
 
 @Injectable({
   providedIn: 'root'
@@ -28,43 +28,20 @@ export class AuthenticationService {
 
   setLoginStatus(status : boolean){
     this.loginStatus.next(status);
-  } 
+  }
+  
+  setCurrentUser(userName : string){
+    this.currentUser.next(userName);
+  }
 
   login(data){
-    this._http.post("http://api.shubhamthorvetest.in/user/login",data).subscribe(
-      data=>{
-        if(data["error"]){
-          this._snackBar.open(data["message"],"Dismiss",{duration : 4000});
-        }else{
-          this.loginStatus.next(true);
-          localStorage.setItem('authToken',data['data']);
-          const decoded = jwt(data['data']);
-          localStorage.setItem('userName',decoded.Data.name);
-          this.currentUser.next(decoded.Data.name);
-          setTimeout(()=>{
-            this.router.navigate(["user/dashboard"]);
-          },1000); 
-        }
-      },
-      err=>{
-        console.log(err);
-      }
-    );
+    return this._http.post("http://localhost:3000/user/login",data);
+    //return this._http.post("http://api.shubhamthorvetest.in/user/login",data);
   }
 
   signUpUser(userData:signUpModel){
-    this._http.post("http://api.shubhamthorvetest.in/user/create",userData).subscribe(
-      data=>{
-        if(data["error"]==null){
-          this.router.navigate(["auth/logIn"]);
-        }else{
-          this._snackBar.open(data["message"],"Dismiss",{duration : 4000});
-        }
-      },
-      error=>{
-        console.log("Something went Wrong");
-      }
-    );
+    return this._http.post("http://localhost:3000/user/create",userData);
+    //return this._http.post("http://api.shubhamthorvetest.in/user/create",userData);
   }
 
   isAuthenticated(){
@@ -97,6 +74,7 @@ export class AuthenticationService {
   }
 
   getAllUsers(){
-    return this._http.get("http://api.shubhamthorvetest.in/user/get"+"?authToken="+localStorage.getItem('authToken'));
+    return this._http.get("http://localhost:3000/user/get"+"?authToken="+localStorage.getItem('authToken'));
+    //return this._http.get("http://api.shubhamthorvetest.in/user/get"+"?authToken="+localStorage.getItem('authToken'));
   }
 }

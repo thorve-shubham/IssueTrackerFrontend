@@ -44,7 +44,9 @@
               </mat-form-field>
               <br><br>
               <button mat-raised-button color="primary" class="example-full-width" [disabled]="signUpFormGroup.invalid" type="submit">Sign Up</button>
-              <br><br><br>
+              <br><br>
+              <mat-card-subtitle>Already a member ? <a style="cursor: pointer;color: #7b1fa2;" (click)="goToLogin()">Log In</a></mat-card-subtitle>
+              <br><br>
           </form>
         </mat-card>
       </div>

@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { AuthenticationService } from 'src/app/authentication.service';
 import { generate } from 'shortid';
 import { signUpModel } from 'src/app/models/signUpModel';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -14,9 +16,11 @@ export class SignUpComponent implements OnInit {
   public signUpFormGroup : FormGroup;
   public signUpData : signUpModel;
   public cPassword :string;
+  public creating : boolean;
   
 
-  constructor(public formBuilder : FormBuilder,public authService:AuthenticationService) { 
+  constructor(public _router : Router,public formBuilder : FormBuilder,public authService:AuthenticationService,private _snackBar : MatSnackBar) { 
+    this.creating = false;
     this.signUpData = new signUpModel();
   }
 
@@ -54,11 +58,28 @@ export class SignUpComponent implements OnInit {
     }
   }
 
-  
+  goToLogin(){
+    this._router.navigate(["auth/logIn"]);
+  }  
 
   createUser(Data){
+    this.creating =true;
     Data.userId = generate();
-    this.authService.signUpUser(Data);
+    this.authService.signUpUser(Data).subscribe(
+      data=>{
+        this.creating = false;
+        if(data["error"]){
+          this._snackBar.open(data["message"],'Dismiss',{duration : 3000});
+        }else{
+          this._snackBar.open(data["message"],'Dismiss',{duration : 3000});
+          this._router.navigate(['auth/logIn']);
+        }
+      },
+      err=>{
+        this.creating = false;
+        console.log("something went wrong");
+      }
+    );
   }
 
 }

@@ -22,7 +22,7 @@
         <br>
         <br>
         <mat-card>
-
+            <br><br>
         
             <p class="mat-display-2 " style="color: white;text-align: center;">
                 LOGIN
@@ -45,7 +45,9 @@
                 </mat-form-field>
                 <br><br>
                 <button class="example-full-width" [disabled]="logInFormGroup.invalid" type="submit" mat-raised-button color="primary">Log In</button>
-                <br><br><br>
+                <br><br>
+                <mat-card-subtitle>Not a member ? <a style="cursor: pointer;color: #7b1fa2;" (click)="goToSignUp()">Sign Up</a></mat-card-subtitle>
+                <br>
             </form>
         </mat-card>
     </div>

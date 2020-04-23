@@ -1,7 +1,9 @@
 
 <br>
-<h1 style="color: white;text-align: center;"> Report Issue</h1>
-<br>
+<button mat-raised-button color="primary" (click)="goBack()">Back</button>
+<br><br>
+<mat-card>
+  <h1 style="color: white;text-align: center;"> Report Issue</h1>
 <form [formGroup]="reportIssueFormGroup" (ngSubmit)="reportIssue(reportIssueFormGroup.value)">
     <mat-form-field class="example-full-width">
         <mat-label>Reporter</mat-label>
@@ -60,7 +62,8 @@
     <br><br>
     
     <button mat-raised-button color="primary" class="example-full-width" [disabled]="reportIssueFormGroup.invalid || reporting" type="submit">Report</button>
-    <mat-spinner diameter="30" *ngIf="reporting"></mat-spinner>
-
-    
+    <div class="row justify-content-md-center">
+      <mat-spinner diameter="30" *ngIf="reporting"></mat-spinner>
+    </div>
 </form>
+</mat-card>
