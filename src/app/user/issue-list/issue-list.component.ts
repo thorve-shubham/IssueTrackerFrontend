@@ -12,22 +12,20 @@ import { SocketService } from 'src/app/socket.service';
   styleUrls: ['./issue-list.component.css'],
 })
 export class IssueListComponent implements OnInit {
-
   @Input()
-  issues : [];
+  issues: [];
 
-  dataSource :any;
+  dataSource: any;
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private router : Router,private userService : UserService) { }
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.issues);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
 
   applyFilter(event: Event) {
@@ -35,8 +33,7 @@ export class IssueListComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  goToIssueDetails(issueId : string){
-    this.router.navigate(['user/viewIssue',issueId]);
+  goToIssueDetails(issueId: string) {
+    this.router.navigate(['user/viewIssue', issueId]);
   }
-
 }

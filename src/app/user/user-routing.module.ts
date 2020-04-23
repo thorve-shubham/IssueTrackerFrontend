@@ -8,16 +8,31 @@ import { ReportIssueComponent } from './report-issue/report-issue.component';
 import { IssueViewComponent } from './issue-view/issue-view.component';
 import { SearchViewComponent } from './search-view/search-view.component';
 
-
 const routes: Routes = [
-  {path:"dashboard" , component : DashboardComponent,  canActivate : [AuthService]},
-  {path:"reportIssue",component : ReportIssueComponent, canActivate : [AuthService]},
-  {path: "viewIssue/:issueId", component : IssueViewComponent, canActivate : [AuthService]},
-  {path : "search/:title", component : SearchViewComponent, canActivate : [AuthService]},
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthService],
+  },
+  {
+    path: 'reportIssue',
+    component: ReportIssueComponent,
+    canActivate: [AuthService],
+  },
+  {
+    path: 'viewIssue/:issueId',
+    component: IssueViewComponent,
+    canActivate: [AuthService],
+  },
+  {
+    path: 'search/:title',
+    component: SearchViewComponent,
+    canActivate: [AuthService],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class UserRoutingModule { }
+export class UserRoutingModule {}

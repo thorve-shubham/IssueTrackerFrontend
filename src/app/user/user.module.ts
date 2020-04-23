@@ -9,11 +9,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { IssueViewComponent } from './issue-view/issue-view.component';
 import { SearchViewComponent } from './search-view/search-view.component';
 import { EditorModule } from '@tinymce/tinymce-angular';
-import { SocketService } from '../socket.service';
-
 
 @NgModule({
-  declarations: [ReportIssueComponent, IssueListComponent,DashboardComponent, IssueViewComponent, SearchViewComponent],
+  declarations: [
+    ReportIssueComponent,
+    IssueListComponent,
+    DashboardComponent,
+    IssueViewComponent,
+    SearchViewComponent,
+  ],
   imports: [
     CommonModule,
     UserRoutingModule,
@@ -22,6 +26,5 @@ import { SocketService } from '../socket.service';
     MaterialModule,
     EditorModule,
   ],
-  
 })
-export class UserModule { }
+export class UserModule {}

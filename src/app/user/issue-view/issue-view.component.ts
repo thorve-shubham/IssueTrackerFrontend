@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/app/user.service';
 import { AuthenticationService } from 'src/app/authentication.service';
@@ -14,9 +20,9 @@ import { Location } from '@angular/common';
   selector: 'app-issue-view',
   templateUrl: './issue-view.component.html',
   styleUrls: ['./issue-view.component.css'],
-  providers : [SocketService,Location]
+  providers: [SocketService, Location],
 })
-export class IssueViewComponent implements OnInit,OnDestroy {
+export class IssueViewComponent implements OnInit, OnDestroy {
   public issueId: string;
   public issue: any;
   public found: boolean;
@@ -28,13 +34,12 @@ export class IssueViewComponent implements OnInit,OnDestroy {
   public commentFound: boolean;
   public users: [any];
   public files: any;
-  public watching : boolean;
+  public watching: boolean;
   public currentUser = this.authService.getUserInfo().userId;
-  public currentAssignee : any;
-  public deleting : boolean = false;
-  public adding : boolean = false;
-  public socketObserver : Subscription;
-
+  public currentAssignee: any;
+  public deleting: boolean = false;
+  public adding: boolean = false;
+  public socketObserver: Subscription;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -42,9 +47,9 @@ export class IssueViewComponent implements OnInit,OnDestroy {
     private userService: UserService,
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
-    private _socket : SocketService,
-    private router : Router,
-    private location : Location,
+    private _socket: SocketService,
+    private router: Router,
+    private location: Location
   ) {
     this.authService.setLoginStatus(true);
     this.found = false;
@@ -58,15 +63,13 @@ export class IssueViewComponent implements OnInit,OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.socketObserver.unsubscribe();
   }
 
   ngOnInit(): void {
-    
-
     this.getCurrentIssue();
-  
+
     this.authService.getAllUsers().subscribe((data) => {
       this.users = data['data'];
     });
@@ -76,34 +79,37 @@ export class IssueViewComponent implements OnInit,OnDestroy {
     this.listenToEvents();
   }
 
-  goBack(){
+  goBack() {
     this.location.back();
   }
 
-  listenToEvents(){
-    this.socketObserver = this._socket.listenToEvent(this.authService.getUserInfo().userId).subscribe(
-      data=>{
-        if(data.issueId == this.issue.issueId){
+  listenToEvents() {
+    this.socketObserver = this._socket
+      .listenToEvent(this.authService.getUserInfo().userId)
+      .subscribe((data) => {
+        if (data.issueId == this.issue.issueId) {
           this.getCurrentIssue();
           this.getComment();
-        }
-        else{
+        } else {
           this.showNotification(data);
         }
-      }
-    )
+      });
   }
 
-  showNotification(data){
-    let notification = this._snackBar.open("Issue : "+data.issueTitle+" Update : "+data.message,"Open",{duration : 4000});
+  showNotification(data) {
+    let notification = this._snackBar.open(
+      'Issue : ' + data.issueTitle + ' Update : ' + data.message,
+      'Open',
+      { duration: 4000 }
+    );
 
-    notification.onAction().subscribe(()=>{
-      this.router.navigate(['user/viewIssue',data.issueId]);
-    })
+    notification.onAction().subscribe(() => {
+      this.router.navigate(['user/viewIssue', data.issueId]);
+    });
   }
 
-  getCurrentIssue(){
-    this.found= false;
+  getCurrentIssue() {
+    this.found = false;
     this.issueSpinner = false;
     this.userService.getIssue(this.issueId).subscribe(
       (data) => {
@@ -114,7 +120,7 @@ export class IssueViewComponent implements OnInit,OnDestroy {
           this.issueSpinner = false;
           this.found = true;
           this.issue = data['data'];
-          this.currentAssignee = data["data"].assignedTo.userId;
+          this.currentAssignee = data['data'].assignedTo.userId;
           this.isWatching();
         }
       },
@@ -125,35 +131,34 @@ export class IssueViewComponent implements OnInit,OnDestroy {
     );
   }
 
-  startWatching(){
-    this.userService.addWatcher(this.issueId,this.currentUser).subscribe(
-      data=>{
-        this.issue = data["data"];
+  startWatching() {
+    this.userService
+      .addWatcher(this.issueId, this.currentUser)
+      .subscribe((data) => {
+        this.issue = data['data'];
         this.isWatching();
         this._socket.emitWatchersModified(this.issueId);
-      }
-    )
+      });
   }
 
-  stopWatching(){
-    this.userService.removeWatcher(this.issueId,this.currentUser).subscribe(
-      data=>{
-        this.issue = data["data"];
+  stopWatching() {
+    this.userService
+      .removeWatcher(this.issueId, this.currentUser)
+      .subscribe((data) => {
+        this.issue = data['data'];
         this.isWatching();
         this._socket.emitWatchersModified(this.issueId);
-      }
-    )
+      });
   }
 
-  isWatching(){
-    for(let user of this.issue.watchers){
-      if(user.userId == this.currentUser){
-        this.watching =true;
+  isWatching() {
+    for (let user of this.issue.watchers) {
+      if (user.userId == this.currentUser) {
+        this.watching = true;
         break;
       }
-      this.watching =false;
+      this.watching = false;
     }
-    
   }
 
   getComment() {
@@ -196,7 +201,10 @@ export class IssueViewComponent implements OnInit,OnDestroy {
             console.log(data['message']);
           } else {
             this.getComment();
-            this._socket.emitComment({userName : this.authService.getUserInfo().name,issueId : this.issueId});
+            this._socket.emitComment({
+              userName: this.authService.getUserInfo().name,
+              issueId: this.issueId,
+            });
           }
         },
         (err) => {
@@ -207,8 +215,12 @@ export class IssueViewComponent implements OnInit,OnDestroy {
   }
 
   updateIssue() {
-    if(this.issue.description!=null && this.issue.description!=undefined && this.issue.description!=""){
-      this.issue.assignedTo.userId =  this.currentAssignee;
+    if (
+      this.issue.description != null &&
+      this.issue.description != undefined &&
+      this.issue.description != ''
+    ) {
+      this.issue.assignedTo.userId = this.currentAssignee;
       this.userService.updateIssue(this.issueId, this.issue).subscribe(
         (data) => {
           if (data['error']) {
@@ -223,10 +235,10 @@ export class IssueViewComponent implements OnInit,OnDestroy {
           console.log('something went Wrong');
         }
       );
-    }
-    else{
-      
-      this._snackBar.open("Description Cannot be Empty","Dismiss",{duration : 2000});
+    } else {
+      this._snackBar.open('Description Cannot be Empty', 'Dismiss', {
+        duration: 2000,
+      });
     }
   }
 
@@ -242,24 +254,25 @@ export class IssueViewComponent implements OnInit,OnDestroy {
         formData.append('file', file);
       }
       this.userService.addAttachments(this.issueId, formData).subscribe(
-        data => {
-          if(data["error"]){
+        (data) => {
+          if (data['error']) {
             this.adding = false;
-            console.log(data["message"]);
-          }else{
+            console.log(data['message']);
+          } else {
             this.adding = false;
             this.issue.attachments = data['data'];
             this._socket.emitAttachmentsModified(this.issueId);
-          }   
+          }
         },
-        err=>{
+        (err) => {
           this.adding = false;
-          console.log("something went wrong");
-        });
-    }else{
-      this._snackBar.open("Attach Data First","Dismiss",{
-        duration : 3000
-      })
+          console.log('something went wrong');
+        }
+      );
+    } else {
+      this._snackBar.open('Attach Data First', 'Dismiss', {
+        duration: 3000,
+      });
     }
   }
 
