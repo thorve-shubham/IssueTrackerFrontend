@@ -117,7 +117,7 @@
             </mat-card>
         </span>
         <br>
-        <mat-spinner *ngIf="commentSpinner"></mat-spinner>
+        <mat-spinner diameter="40" *ngIf="commentSpinner"></mat-spinner>
         <div *ngIf="commentFound">
             <mat-card>Comments : <br><hr>
                 <p *ngFor="let comment of comments;let last = last">

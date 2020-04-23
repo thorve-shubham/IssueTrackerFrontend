@@ -46,6 +46,8 @@ export class LoginComponent implements OnInit {
         this.authService.setCurrentUser(decoded.Data.name);
         this._router.navigate(['user/dashboard']);
       }
+    },(err)=>{
+      this.loading = false;
     });
   }
 
